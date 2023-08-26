@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>ENDEREÇO</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">    
+    <link rel="stylesheet" type="text/css" href="css/style.css">
+    <link rel="stylesheet" type="text/css" href="css/cadastro.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cabin&family=Nanum+Gothic&display=swap" rel="stylesheet">
+
+</head>
+
+<body>    
+
+    <section class="imagem">
+        <h1>Seja um vencedor<br>
+        Invista em você<br>
+        Faça a diferença na vida</h1>
+        
+        <div class="form1">
+            <h3>Finalize seu cadastro</h3>
+
+            <h5>Os campos com <span class="asterisco">*</span> são de preenchimento obrigatório!</h5>
+
+            <label for="cep"><span class="cep">CEP</span><span class="asterisco">*</span>
+            <input type="text" class="campo" class="cep" id="cep" placeholder="Digite o CEP" required oninput="this.value = this.value.replace(/[^0-9]/g, '').substring(0, 8)">
+
+            <div id="cep-error" style="color: red; font-style: italic; display: none;">
+                O CEP informado não existe ou foi digitado incorretamente.
+            </div>              
+
+            <label for="logradouro"><span class="logradouro">Logradouro</span><span class="asterisco">*</span>
+            <input type="text" class="campo" class="logradouro" id="logradouro" placeholder="Digite o nome do Logradouro">
+            
+            <label for="numero"><span class="numero">Número</span>
+            <input type="text" class="campo" id="numero" placeholder="Digite o número">
+    
+            <label for="complemento"><span class="complemento">Complemento</span><span class="asterisco">*</span>
+            <input type="text" class="campo" id="complemento" placeholder="Digite o Complemento">
+
+            <label for="bairro"><span class="bairro">Bairro</span><span class="asterisco">*</span>
+            <input type="text" class="campo" id="bairro" placeholder="Digite o nome do Bairro">
+
+            <label for="cidade"><span class="cidade">Cidade</span><span class="asterisco">*</span>
+            <input type="text" class="campo" id="cidade" placeholder="Digite o nome da Cidade">
+
+            <label for="estado"><span class="estado">Estado</span><span class="asterisco">*</span>
+            <input type="text" class="campo" id="estado" placeholder="Digite o nome do Estado">
+
+            </label>
+            <button type="button" class="bto1" id="continuar">Continuar</button>
+        </div>
+    </section>
+
+    <script>
+        const cepInput = document.getElementById("cep");
+        const logradouroInput = document.getElementById("logradouro");
+        const bairroInput = document.getElementById("bairro");
+        const cidadeInput = document.getElementById("cidade");
+        const estadoInput = document.getElementById("estado");
+        const cepErrorMessage = document.getElementById("cep-error");
+      
+        cepInput.addEventListener("input", function () {
+          let cep = cepInput.value.replace(/\D/g, ""); // Remover caracteres não numéricos
+          
+          if (cep.length > 5) {
+            cep = cep.substring(0, 5) + "-" + cep.substring(5);
+          }
+      
+          cepInput.value = cep;
+      
+          if (cep.length === 9) {
+            const url = `https://viacep.com.br/ws/${cep}/json/`;
+      
+            fetch(url)
+              .then(response => response.json())
+              .then(data => {
+                if (data.erro) {
+                  mostrarErroCEP();
+                } else {
+                  ocultarErroCEP();
+                  preencherCampos(data);
+                }
+              })
+              .catch(error => console.error("Erro ao buscar CEP:", error));
+          } else {
+            ocultarErroCEP();
+          }
+        });
+      
+        function preencherCampos(data) {
+          logradouroInput.value = data.logradouro || "";
+          bairroInput.value = data.bairro || "";
+          cidadeInput.value = data.localidade || "";
+          estadoInput.value = data.uf || "";
+        }
+      
+        function mostrarErroCEP() {
+          cepErrorMessage.style.display = "block";
+        }
+      
+        function ocultarErroCEP() {
+          cepErrorMessage.style.display = "none";
+        }
+
+		const continuarButton = document.getElementById("continuar");
+
+// Função para verificar se todos os campos estão preenchidos
+function verificarCamposPreenchidos() {
+    const campos = [
+        cepInput.value,
+        logradouroInput.value,
+        bairroInput.value,
+        cidadeInput.value,
+        estadoInput.value
+    ];
+
+    return campos.every(campo => campo.trim() !== "");
+}
+
+	// Evento de clique no botão "Continuar"
+	continuarButton.addEventListener("click", function () {
+		if (verificarCamposPreenchidos()) {
+			// Redirecionar para a próxima página
+			window.location.href = "proximamissao.html";
+		} else {
+			alert("Por favor, preencha todos os campos obrigatórios antes de continuar.");
+		}
+});
+    </script>    
+</body>
+</html>
+
